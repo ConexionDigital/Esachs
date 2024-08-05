@@ -1,0 +1,45 @@
+﻿@model AccesoViewModel
+
+@{
+    ViewData["Title"] = "Acceder";
+}
+
+
+<form asp-controller="Ingreso" asp-action="Index" asp-route-ReturnUrl="@ViewData["ReturnUrl"]">
+
+    <div class="text-danger" asp-validation-summary="All"></div>
+
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Correo</label>
+        <input asp-for="Email" class="form-control" />
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Contraseña</label>
+        <input asp-for="Password" class="form-control" />
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+
+    <div class="mb-3">
+        <div class="custom-check">
+            <label asp-for="RememberMe">
+                <input asp-for="RememberMe" />
+                @Html.DisplayNameFor(m => m.RememberMe)
+            </label>
+        </div>
+    </div>
+
+    <div>
+        <button type="submit" class="btn btn-primary">Acceder</button>
+        <p><a asp-controller="Usuarios" asp-action="OlvidoPassword">Olvidé mi contraseña</a></p>
+    </div>
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

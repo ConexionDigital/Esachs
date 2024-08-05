@@ -1,0 +1,215 @@
+﻿@model TomaTallaViewModel
+@{
+    ViewData["Title"] = "Tomador de tallas";
+}
+
+
+<style>
+    .descripcion {
+        border: none;
+        border-color: transparent;
+        outline: none
+    }
+</style>
+
+
+<h2>Tomador de Tallas</h2>
+
+
+<form asp-action="Tallas">
+
+    <div class="card mb-3 shadow">
+        <div class="card-body">
+            <h4 class="card-title">Datos personales</h4>
+            <table>
+                <tr>
+                    <td>Nombre:&ensp;&ensp;</td>
+                    <td class="w-100"><input asp-for="Funcionario.Nombre" class="form-control-plaintext" name="Model.Funcionario.Nombre" value="@Model.Funcionario.Nombre" readonly /></td>
+                </tr>
+                <tr>
+                    <td>Rut: </td>
+                    <input class="visually-hidden" name="Model.Funcionario.Rut" value="@Model.Funcionario.Rut" readonly />
+                    <input class="visually-hidden" name="Model.Funcionario.Dv" value="@Model.Funcionario.Dv" readonly />
+                    <td>@Model.Funcionario.Rut-@Model.Funcionario.Dv</td>
+                </tr>
+                <tr>
+                    <td>Cargo: </td>
+                    <td><input class="form-control-plaintext" name="Model.Funcionario.Cargo.Nombre" value="@Model.Funcionario.Cargo.Nombre" readonly /></td>
+                </tr>
+            </table>
+            <center>
+                <a class="btn btn-primary" href="~/docs/MEDIDAS.pdf" target="_blank">
+                    <i class="bi bi-exclamation-circle"> Saber mi Talla </i>
+                </a>
+            </center>
+        </div>
+    </div>
+
+    <div class="card mb-3 shadow">
+        <div class=card-body>
+            <h3 class="card-title">Datos adicionales</h3>
+            <table>
+                <tr>
+                    <td>Correo: </td>
+                    @if (Model.Funcionario.TallaTomada)
+                    {
+                        <td><input type="email" name="Model.Funcionario.Correo" class="form-control ms-3" value="@Model.Funcionario.Correo" required /></td>
+                    }
+                    else
+                    {
+                        <td><input type="email" name="Model.Funcionario.Correo" class="form-control ms-3" required /></td>
+                    }
+
+                </tr>
+                <tr>
+                    <td>Teléfono: </td>
+                    @if (Model.Funcionario.TallaTomada)
+                    {
+                        <td><input type="text" name="Model.Funcionario.Telefono" class="form-control ms-3" value="@Model.Funcionario.Telefono" /></td>
+                    }
+                    else
+                    {
+                        <td><input type="text" name="Model.Funcionario.Telefono" class="form-control ms-3" /></td>
+                    }
+                    
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model.Funcionario.TallaTomada)
+            {
+                <div class="alert alert-info">Usted ya ha realizado una toma de talla</div>
+
+                <table class="table mb-5">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Talla</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach(var prenda in Model.Prendas)
+                            {   
+                                <tr>
+                                    <td>@prenda.DescPrenda</td>
+                                    <td>@prenda.DescTalla</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table class="table mb-5">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th></th>
+                            <th>Talla</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 0;
+
+                            var prendas = Model.Funcionario.Uniforme.Prendas.Where(p => p.Sexo == Model.Funcionario.Sexo || p.Sexo == 'U');
+
+                            foreach (var prenda in prendas)
+                            {
+                                if(new[] { 17, 18 }.Contains(prenda.Id))
+                                {
+                                    if (!Model.Funcionario.ParkaSolicitada)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @prenda.DisplayName
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ModalPrenda" data-img="@prenda.Id">
+                                                    Ver prenda
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <select name="Model.Prendas[@i].CodPrenda" class="form-select w-auto">
+                                                    @foreach (var prendaTalla in prenda.PrendasTallas)
+                                                    {
+                                                        <option value="@prendaTalla.CodProducto">@prendaTalla.Talla.Descripcion</option>
+
+                                                    }
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        i += 1;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>
+                                            @prenda.DisplayName
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#ModalPrenda" data-img="@prenda.Id">
+                                                Ver prenda
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <select name="Model.Prendas[@i].CodPrenda" class="form-select w-auto">
+                                                @foreach (var prendaTalla in prenda.PrendasTallas)
+                                                {
+                                                    <option value="@prendaTalla.CodProducto">@prendaTalla.Talla.Descripcion</option>
+
+                                                }
+                                            </select>
+                                        </td>
+                                    </tr>
+
+                                    i += 1;
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+
+                <button type="submit" class="btn btn-success w-100">Ingresar datos</button>
+            }
+        </div>
+
+    </div>
+
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalPrenda" tabindex="-1" aria-labelledby="ModalPrendaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body ">
+                <img id="imagenSeleccionada" src="" class="w-100">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            // Función que se ejecuta cuando se muestra el modal
+            $('#ModalPrenda').on('show.bs.modal', function (event) {
+                // Extraer el valor de data-mi-dato del botón
+                var miDato = $(event.relatedTarget).data('img');
+
+                // Actualizar la fuente de la imagen con el dato
+                $('#imagenSeleccionada').attr('src', '../img/prendas/' + miDato + ".jpg");
+            });
+        });
+    </script>
+}

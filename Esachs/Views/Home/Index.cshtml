@@ -1,8 +1,40 @@
-﻿@{
+﻿@model AccesoFuncViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="w-50 container-fluid">
+    <div class="card p-5 row align-items-center">
+        <div class="card-body">
+            <h2 class="card-title mb-5">
+
+                <img src="~/img/talla.png" style="width:40px" />
+                Acceso
+            </h2>
+            @*<div class="alert alert-danger text-center">La página web se encuentra en mantención</div>*@
+            <form asp-action="Index">
+                <div class="mb-3">
+                    <label asp-for="Rut" class="col-form-label">Ingrese rut</label>
+                    <input asp-for="Rut" class="form-control" placeholder="11111111-1" />
+                    <span asp-validation-for="Rut" class="text-danger"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="Clave" class="form-label">Ingrese contraseña</label>
+                    <input asp-for="Clave" class="form-control" type="password" />
+                    <span asp-validation-for="Clave" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-5 w-100">Acceder</button>
+            </form>
+            
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

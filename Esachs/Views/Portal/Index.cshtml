@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "Portal";
+}
+
+<div class="row">
+    @*<div class="col-sm-4 mb-3 mb-sm-0">
+        <div class="card">
+            <div class="card-body text-center">
+                <img class="w-75 p-3" src="~/img/prendas-logo.png" />
+            </div>
+            <div class="card-footer text-center">Solicitud de prendas</div>
+            <a href="#" class="stretched-link"></a>
+        </div>
+    </div>*@
+
+    <div class="col-sm-6 mb-3 mb-sm-0">
+        <div class="card">
+            <div class="card-body text-center">
+                <img class="w-75 p-3" src="~/img/grafico-logo.png" />
+            </div>
+            <div class="card-footer text-center">Reportes</div>
+            <a asp-controller="Reportes" asp-action="Index" class="stretched-link"></a>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <img class="w-75 p-3" src="~/img/usuario-logo.png" />
+            </div>
+            <div class="card-footer text-center">Administración de usuarios</div>
+            <a href="#" class="stretched-link"></a>
+        </div>
+    </div>
+    
+
+</div>

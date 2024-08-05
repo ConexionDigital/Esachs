@@ -1,0 +1,221 @@
+﻿@model ReporteViewModel
+
+@{
+    ViewData["Title"] = "Reporte";
+
+    string xcolor = "red";
+    string xbarraprogres = "50 deg";
+    int xpercent = 70;
+}
+
+
+<div class="text-center">
+    <h2 class="mb-3">Reporte Toma de Tallas</h2>
+</div>
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-sm-6 mb-3 mb-sm-3 ps-0">
+            <div class="card h-100">
+                <div class="card-title">
+                    <h3 class="ms-3">General</h3>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td>Funcionarios con talla tomada: </td>
+                            <td>@Model.TallasTomadas</td>
+                        </tr>
+                        <tr>
+                            <td>Funcionarios pendientes:</td>
+                            
+                            @{
+                                int restantes = Model.FuncionariosTotales - Model.TallasTomadas;
+                            }
+
+                            <td>@restantes</td>
+                        </tr>
+                        <tr>
+                            <td>Funcionarios totales: </td>
+                            <td>@Model.FuncionariosTotales</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 pe-0 mb-3 ">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="w-75 h-75 mx-auto">
+                        <canvas id="myChart2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row">
+        <div class="card col-12">
+            <div class="card-body text-center">
+                <table id="example" class="display compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Rut</th>
+                            <th>Nombre</th>
+                            <th>Centro de Costo</th>
+                            <th>Uniforme</th>
+                            <th>Correo</th>
+                            <th>Talla Tomada</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var fun in Model.Funcionarios)
+                        {
+                            var rutCompleto = @fun.Rut + "-" + @fun.Dv;
+
+                            <tr>
+                                <td>@rutCompleto</td>
+                                <td>@fun.Nombre</td>
+                                <td>@fun.Ceco.Nombre</td>
+                                <td>@fun.Uniforme.Descripcion</td>
+                                <td>@fun.Correo</td>
+                                @if (fun.TallaTomada)
+                                {
+                                    <td>Completado</td>
+                                }
+                                else
+                                {
+                                    <td>Pendiente</td>   
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+
+
+    <script>
+
+        var tallasTomadas = @Model.TallasTomadas;
+        var totalFuncionarios = @Model.FuncionariosTotales;
+
+        var porcentajeTallas = (tallasTomadas / totalFuncionarios) * 100;
+
+        const ctx = document.getElementById('myChart2');
+
+        Chart.overrides.doughnut.plugins.legend.position = 'right';
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Completado',
+                    'Restante'
+                ],
+                datasets: [{
+                    label: 'Cantidad',
+                    data: [tallasTomadas, totalFuncionarios - tallasTomadas],
+                    backgroundColor: [
+                        'rgb(141, 115, 254)',
+                        'rgb(87, 87, 87)'
+                    ],
+                    hoverOffset: 4
+                }]
+            }
+        });
+
+
+        new DataTable('#example', {
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json'
+            },
+            ordering: false,
+            columnDefs: [
+                {
+                    targets: 0,
+                    width: '8em'
+                }
+            ],
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            text: '<i class="bi bi-filetype-xlsx"></i> Descargar Excel',
+                            className: 'btn-success',
+                            exportOptions: {
+                                modifier: {
+                                    page: 'all',
+                                    search: 'applied'
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            initComplete: function () {
+                this.api()
+                    .columns()
+                    .every(function () {
+                        /*let column = this;
+                        let title = column.footer().textContent;
+
+                        // Create input element
+                        let input = document.createElement('input');
+                        input.placeholder = title;
+                        column.footer().replaceChildren(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });*/
+
+                        let column = this;
+                        let header = $(column.header());
+                        let title = header.text();
+
+                        // Crear elemento input
+                        let input = document.createElement('input');
+                        input.placeholder = 'Buscar';
+                        $(input).css('width', '100%');
+
+                        // Agrega el input después del texto del header
+                        header.append(input);
+
+                        // Detener propagación del evento de clic para el input
+                        $(input).on('click', function (e) {
+                            e.stopPropagation();
+                        });
+
+                        // Event listener para el input
+                        $(input).on('keyup change', function () {
+                            if (column.search() !== this.value) {
+                                column.search(this.value).draw();
+                            }
+                        });
+                    });
+            }
+        });
+    </script>
+
+}
