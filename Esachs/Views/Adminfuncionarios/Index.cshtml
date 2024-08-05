@@ -1,0 +1,130 @@
+﻿@model AdminFuncViewModel
+
+@{
+    ViewData["Title"] = "Administración de funcionarios";
+
+    string xcolor = "red";
+    string xbarraprogres = "50 deg";
+    int xpercent = 70;
+}
+
+
+<div class="container">
+   
+    <div class="row">
+        <div class="card col-12">
+            <div class="card-body text-center">
+                <table id="example" class="display compact" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Rut</th>
+                            <th>Centro de Costo</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fun in Model.Funcionarios)
+                        {
+                            var rutCompleto = @fun.Rut + "-" + @fun.Dv;
+
+                            <tr>
+                                <td>@rutCompleto</td>
+                                
+                                <td>@fun.Ceco.Nombre</td>
+                                
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+
+
+    <script>
+
+
+
+        new DataTable('#example', {
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json'
+            },
+            ordering: false,
+            columnDefs: [
+                {
+                    targets: 0,
+                    width: '8em'
+                }
+            ],
+            layout: {
+                topStart: {
+                    buttons: [
+                        {
+                            extend: 'excel',
+                            text: '<i class="bi bi-filetype-xlsx"></i> Descargar Excel',
+                            className: 'btn-success',
+                            exportOptions: {
+                                modifier: {
+                                    page: 'all',
+                                    search: 'applied'
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            initComplete: function () {
+                this.api()
+                    .columns()
+                    .every(function () {
+                        /*let column = this;
+                        let title = column.footer().textContent;
+
+                        // Create input element
+                        let input = document.createElement('input');
+                        input.placeholder = title;
+                        column.footer().replaceChildren(input);
+
+                        // Event listener for user input
+                        input.addEventListener('keyup', () => {
+                            if (column.search() !== this.value) {
+                                column.search(input.value).draw();
+                            }
+                        });*/
+
+                        let column = this;
+                        let header = $(column.header());
+                        let title = header.text();
+
+                        // Crear elemento input
+                        let input = document.createElement('input');
+                        input.placeholder = 'Buscar';
+                        $(input).css('width', '100%');
+
+                        // Agrega el input después del texto del header
+                        header.append(input);
+
+                        // Detener propagación del evento de clic para el input
+                        $(input).on('click', function (e) {
+                            e.stopPropagation();
+                        });
+
+                        // Event listener para el input
+                        $(input).on('keyup change', function () {
+                            if (column.search() !== this.value) {
+                                column.search(this.value).draw();
+                            }
+                        });
+                    });
+            }
+        });
+    </script>
+
+}
