@@ -1,11 +1,13 @@
 ﻿using achsservicios;
 using achsservicios.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace achsservicios.Controllers
 {
+    [Authorize]
     public class ReportesController : Controller
     {
         private readonly ILogger<HomeController> logger;
@@ -23,7 +25,8 @@ namespace achsservicios.Controllers
             var totalFuncionarios = context.Funcionarios.Count();
             var funcionarios = context.Funcionarios
                                     .Include(f => f.Uniforme)
-                                    .Include(f => f.Ceco);
+                                    .Include(f => f.Ceco)
+                                    .Where(f => f.Estado);
 
             var reporteModel = new ReporteViewModel
             {
