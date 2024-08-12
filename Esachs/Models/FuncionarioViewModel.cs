@@ -4,10 +4,11 @@ namespace achsservicios.Models
 {
     public class FuncionarioViewModel
     {
-        public string Rut { get; set; }
-        public string Nombre { get; set; }
-        public string Cargo { get; set; }
-        public string NombreCeco { get; set; }
-        public IEnumerable<Prenda> Prendas { get; set; }
+        public Funcionario funcionario { get; set; }
+
+        public IEnumerable<Cargo> cargo { get; set; }
+
+        public IEnumerable<Uniforme> uniforme { get; set; }
+        public IEnumerable <Ceco> ceco { get; set; }  
     }
-}
+} 

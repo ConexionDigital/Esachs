@@ -19,6 +19,7 @@ namespace achsservicios
         }
 
         public DbSet<Cargo> Cargos { get; set; }
+        public DbSet<Ceco> Ceco { get; set; }
         public DbSet<Funcionario> Funcionarios { get; set; }
         public DbSet<Prenda> Prendas { get; set; }
         public DbSet<Talla> Tallas { get; set; }

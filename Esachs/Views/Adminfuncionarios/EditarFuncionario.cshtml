@@ -1,0 +1,83 @@
+﻿@model FuncionarioViewModel
+@{
+    ViewData["Title"] = "Editar funcionario";
+}
+
+<h1>Editar funcionario</h1>
+<form asp-action="EditarFuncionario" method="post">
+    <div class="form-group">
+        <label for="rut" class="form-label">Rut:</label>
+        <input name="rut" class="form-control" id="rut" value="@Model.funcionario.Rut" readonly />
+    </div>
+
+    <div class="form-group">
+        <label for="Nombre" class="form-label">Nombre del funcionario:</label>
+        <input name="Nombre" class="form-control" id="NombreFuncionario" value="@Model.funcionario.Nombre" />
+    </div>
+
+    <div class="form-group">
+        <label for="Telefono" class="form-label">Teléfono del funcionario:</label>
+        <input name="Telefono" class="form-control" id="TelefonoFuncionario" value="@Model.funcionario.Telefono" />
+    </div>
+
+    <div class="form-group">
+        <label for="Correo" class="form-label">Correo del funcionario:</label>
+        <input name="Correo" class="form-control" id="CorreoFuncionario" value="@Model.funcionario.Correo" />
+    </div>
+
+    <div class="form-group">
+        <label for="Cargos" class="form-label">Cargo:</label>
+        <select name="id_cargo" class="form-select" id="Cargos">
+            @foreach (var cargo in Model.cargo)
+            {
+                if (Model.funcionario.Cargo.Nombre.Equals(cargo.Nombre))
+                {
+                    <option value="@cargo.Nombre.ToString()" selected>@cargo.Nombre</option>
+                }
+                else
+                {
+                    <option value="@cargo.Nombre.ToString()">@cargo.Nombre</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Uniformes" class="form-label">Uniforme:</label>
+        <select name="id_uniforme" class="form-select" id="Uniformes">
+            @foreach (var uniforme in Model.uniforme)
+            {
+                if (Model.funcionario.Uniforme.Descripcion.Equals(uniforme.Descripcion))
+                {
+                    <option value="@uniforme.Descripcion.ToString()" selected>@uniforme.Descripcion</option>
+                }
+                else
+                {
+                    <option value="@uniforme.Descripcion.ToString()">@uniforme.Descripcion</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="Cecos" class="form-label">Centros de costos:</label>
+        <select name="id_ceco" class="form-select" id="Cecos">
+            @foreach (var ceco in Model.ceco)
+            {
+                if (Model.funcionario.Ceco.Nombre.Equals(ceco.Nombre))
+                {
+                    <option value="@ceco.Nombre" selected>@ceco.Nombre</option>
+                }
+                else
+                {
+                    <option value="@ceco.Nombre">@ceco.Nombre</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="text-end mt-4">
+        <a class="btn btn-secondary" asp-action="Index">Volver</a>
+        <button type="submit" class="btn btn-primary">Modificar</button>
+    </div>
+</form>

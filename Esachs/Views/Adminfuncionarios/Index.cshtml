@@ -3,9 +3,7 @@
 @{
     ViewData["Title"] = "Administración de funcionarios";
 
-    string xcolor = "red";
-    string xbarraprogres = "50 deg";
-    int xpercent = 70;
+  
 }
 
 
@@ -18,23 +16,28 @@
                     <thead>
                         <tr>
                             <th>Rut</th>
+                            <th>Nombre</th>
+                            <th>Cargo</th>
+                            <th>Uniforme</th>
                             <th>Centro de Costo</th>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
+                            <th style="padding-bottom: 30px">Editar</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var fun in Model.Funcionarios)
                         {
                             var rutCompleto = @fun.Rut + "-" + @fun.Dv;
-
                             <tr>
                                 <td>@rutCompleto</td>
-                                
+                                <td>@fun.Nombre</td>
+                                <td>@fun.Cargo.Nombre</td>
+                                <td>@fun.Uniforme.Descripcion</td>
                                 <td>@fun.Ceco.Nombre</td>
-                                
+                                <td>
+                                    <a type="button" class="btn btn-primary" asp-action="EditarFuncionario" asp-route-id="@fun.Rut">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -98,30 +101,34 @@
                                 column.search(input.value).draw();
                             }
                         });*/
+                       
 
                         let column = this;
-                        let header = $(column.header());
-                        let title = header.text();
+                        
+                        if (column[0][0] < 5) {
+                            let header = $(column.header());
+                            let title = header.text();
 
-                        // Crear elemento input
-                        let input = document.createElement('input');
-                        input.placeholder = 'Buscar';
-                        $(input).css('width', '100%');
+                            // Crear elemento input
+                            let input = document.createElement('input');
+                            input.placeholder = 'Buscar';
+                            $(input).css('width', '100%');
 
-                        // Agrega el input después del texto del header
-                        header.append(input);
+                            // Agrega el input después del texto del header
+                            header.append(input);
 
-                        // Detener propagación del evento de clic para el input
-                        $(input).on('click', function (e) {
-                            e.stopPropagation();
-                        });
+                            // Detener propagación del evento de clic para el input
+                            $(input).on('click', function (e) {
+                                e.stopPropagation();
+                            });
 
-                        // Event listener para el input
-                        $(input).on('keyup change', function () {
-                            if (column.search() !== this.value) {
-                                column.search(this.value).draw();
-                            }
-                        });
+                            // Event listener para el input
+                            $(input).on('keyup change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                        };
                     });
             }
         });
