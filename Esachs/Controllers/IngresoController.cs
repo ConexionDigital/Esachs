@@ -4,6 +4,7 @@ using achsservicios.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 
 namespace achsservicios.Controllers
 {
@@ -94,6 +95,13 @@ namespace achsservicios.Controllers
 
             return View(registro);
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
 
