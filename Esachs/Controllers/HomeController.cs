@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace achsservicios.Controllers
 {
@@ -35,29 +36,37 @@ namespace achsservicios.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Index(AccesoFuncViewModel modelo)
         {
-            var rutDv = modelo.Rut.Split('-');
-            var funcionarios = context.Funcionarios;
-
-            var existeFuncionario = funcionarios.Any(f =>
-                f.Rut == int.Parse(rutDv[0]) &&
-                f.Dv == char.Parse(rutDv[1]) &&
-                f.Clave == modelo.Clave);
-
-            HttpContext.Session.SetString("rutFunc", rutDv[0]);
-
-            if (existeFuncionario)
+            
+            if (Regex.IsMatch(modelo.Identificador, "^(\\d{1,8}-[\\dkK])$")) 
             {
-                var estado = funcionarios.FirstOrDefault(f => f.Rut == int.Parse(rutDv[0])).Estado;
+                var rutDv = modelo.Identificador.Split('-');
+                var funcionarios = context.Funcionarios;
 
-                if (estado)
+                var existeFuncionario = funcionarios.Any(f =>
+                    f.Rut == int.Parse(rutDv[0]) &&
+                    f.Dv == char.Parse(rutDv[1]) &&
+                    f.Clave == modelo.Clave);
+
+                HttpContext.Session.SetString("rutFunc", rutDv[0]);
+
+                if (existeFuncionario)
                 {
-                    if(funcionarios.FirstOrDefault(f => f.Rut == int.Parse(rutDv[0])).TallaTomada)
+                    var estado = funcionarios.FirstOrDefault(f => f.Rut == int.Parse(rutDv[0])).Estado;
+
+                    if (estado)
                     {
-                        return RedirectToAction("ConfRecepcion");
+                        if (funcionarios.FirstOrDefault(f => f.Rut == int.Parse(rutDv[0])).TallaTomada)
+                        {
+                            return RedirectToAction("ConfRecepcion");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Tallas");
+                        }
                     }
                     else
                     {
-                        return RedirectToAction("Tallas");
+                        return View(modelo);
                     }
                 }
                 else
@@ -65,11 +74,32 @@ namespace achsservicios.Controllers
                     return View(modelo);
                 }
             }
-            else
+            else 
             {
-                return View(modelo);
+                var usuario = userManager.Users.FirstOrDefault(u => u.Email == modelo.Identificador);
+
+                if (usuario != null)
+                {
+                    var result = signInManager.PasswordSignInAsync(usuario, modelo.Clave, isPersistent: false, lockoutOnFailure: false).Result;
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Reportes"); 
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Contraseña incorrecta.");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "El usuario no existe.");
+                }
             }
+
+            return View(modelo);
         }
+
 
         public IActionResult Tallas()
         {

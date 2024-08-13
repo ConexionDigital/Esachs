@@ -12,13 +12,14 @@
                 <img src="~/img/talla.png" style="width:40px" />
                 Acceso
             </h2>
-            @*<div class="alert alert-danger text-center">La página web se encuentra en mantención</div>*@
+           
             <form asp-action="Index">
                 <div class="mb-3">
-                    <label asp-for="Rut" class="col-form-label">Ingrese rut</label>
-                    <input asp-for="Rut" class="form-control" placeholder="11111111-1" />
-                    <span asp-validation-for="Rut" class="text-danger"></span>
+                    <label asp-for="Identificador" class="col-form-label">Ingrese RUT o Correo</label>
+                    <input asp-for="Identificador" class="form-control" placeholder="11111111-1 o correo@example.com" />
+                    <span asp-validation-for="Identificador" class="text-danger"></span>
                 </div>
+
                 
                 <div>
                     <label asp-for="Clave" class="form-label">Ingrese contraseña</label>
